@@ -1,0 +1,21 @@
+{
+  "name": "@musubi/auth",
+  "version": "1.0.0",
+  "description": "Better Auth configuration shared between server and client.",
+  "main": "index.js",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "frgtn.dev",
+  "license": "MIT",
+  "packageManager": "pnpm@10.33.0",
+  "dependencies": {
+    "@musubi/db": "workspace:*",
+    "@musubi/config": "workspace:*",
+    "better-auth": "^1.6.9"
+  }
+}
