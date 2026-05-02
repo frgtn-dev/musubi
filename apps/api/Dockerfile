@@ -23,4 +23,4 @@ ENV NODE_ENV=production
 
 EXPOSE 3000
 
-CMD ["pnpm", "exec", "tsx", "src/index.ts"]
+CMD ["sh", "-c", "pnpm -F @musubi/db exec drizzle-kit migrate && pnpm exec tsx src/index.ts"]
