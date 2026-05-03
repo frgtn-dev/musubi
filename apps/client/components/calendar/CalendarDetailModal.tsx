@@ -70,7 +70,7 @@ export default function CalendarDetail({ calendar, visible, onClose, onDelete, o
   }
 
   const handlerCalendarRemove = async (calendar: Calendar) => {
-    await onDelete(calendar);
+    onDelete(calendar);
     onClose();
   };
 
@@ -117,7 +117,7 @@ export default function CalendarDetail({ calendar, visible, onClose, onDelete, o
               <View>
                 <Text style={styles.modalTitle}>{calendar?.name}</Text>
                 <Text style={{ color: colors.fg3, fontSize: 12 }}>
-                  6 members · 3 events
+                  {calendar?.members.length} members · {visibleEvents.length} events
                 </Text>
               </View>
               <Pressable
