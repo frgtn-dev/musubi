@@ -8,8 +8,6 @@ Musubi (結び) means *knot* or *tie* in Japanese. The app ties people's schedul
 
 > ⚠️ **Status:** Early stage. MVP-level features only, expect rough edges. Public for code-sharing and as a portfolio piece.
 
-## Motivation
-
 ## What works today
 
 - Create, edit, delete calendars
