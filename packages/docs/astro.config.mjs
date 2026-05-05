@@ -34,6 +34,5 @@ export default defineConfig({
     mode: 'standalone',
   }),
 
-  site: "https://musubi.frgtn.dev",
   base: "/docs"
 });
