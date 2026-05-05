@@ -74,7 +74,7 @@ const expoConfig = {
   extra: {
     apiUrl: process.env.API_URL,
     eas: {
-      projectId: "38c1b679-ef45-47ee-b644-36000f3c55a6",
+      projectId: "4e24bdfa-490c-4c3e-9a76-7abef4efa823",
     },
   }
 }
