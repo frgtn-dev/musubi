@@ -1,0 +1,97 @@
+import { colors, styles } from "@/constants/theme";
+import { useModalAnimation } from "@/hooks/useModalAnimation";
+import Animated from "react-native-reanimated";
+import { Modal, Pressable, TextInput, View, Text } from "react-native";
+import { useState } from "react";
+
+
+type Props = {
+  visible: boolean,
+  placeholder: string,
+  onConfirm: (value: string) => void,
+  onClose: () => void,
+  onTest?: (value: string) => Promise<{ ok: boolean, error: string }>,
+}
+
+
+export default function InputModal({ visible, placeholder, onConfirm, onClose, onTest }: Props) {
+  const { fadeStyle, handleClose } = useModalAnimation(visible, onClose);
+  const [inputValue, setInputValue] = useState("");
+  const [valueError, setValueError] = useState("");
+
+  const handleConfirm = async (value: string) => {
+    if (onTest) {
+      const { ok, error } = await onTest(value);
+      if (!ok) {
+        setValueError(error ?? "Uknown error...");
+        return;
+      }
+      onConfirm(value);
+      handleClose();
+    }
+  }
+
+  return (
+    <Modal
+      visible={visible}
+      onRequestClose={handleClose}
+      animationType="none"
+      transparent={true}
+      statusBarTranslucent={true}
+    >
+      <Animated.View style={[styles.modalOverlay, fadeStyle]}>
+        <Pressable style={{ flex: 1 }} />
+      </Animated.View>
+      <Animated.View
+        style={[{
+          width: "80%",
+          minHeight: "10%",
+          position: "absolute",
+          alignSelf: "center",
+          justifyContent: "center",
+          top: "35%",
+        }, fadeStyle]}
+      >
+        <View
+          style={{
+            gap: 16,
+            backgroundColor: colors.bg3,
+            padding: 16,
+            borderRadius: 15,
+          }}
+        >
+          <TextInput
+            style={{
+              width: "100%",
+              padding: 12,
+              borderWidth: 1,
+              borderBottomWidth: 1,
+              borderColor: colors.line,
+              borderRadius: 10,
+              color: colors.fg,
+            }}
+            placeholder={placeholder}
+            placeholderTextColor={colors.fg3}
+            onChangeText={(t) => setInputValue(t)}
+          />
+          {valueError ? <Text style={[styles.errorText, { alignSelf: "center" }]}>{valueError}</Text> : null}
+          <View style={{
+            flexDirection: "row",
+            gap: 16,
+          }}
+          >
+            <Pressable style={styles.btnSecondary} onPress={handleClose}>
+              <Text style={styles.btnSecondaryText}>Cancel</Text>
+            </Pressable>
+            <Pressable
+              style={styles.btnPrimary}
+              onPress={() => handleConfirm(inputValue)}
+            >
+              <Text style={styles.btnPrimaryText}>Confirm</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Animated.View>
+    </Modal >
+  );
+}

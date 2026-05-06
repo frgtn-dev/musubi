@@ -1,8 +1,3 @@
-import dotenv from "dotenv";
-import path from "path";
-
-dotenv.config({ path: path.relative(__dirname, "../../.env") })
-
 const expoConfig = {
   name: "Musubi",
   slug: "musubi",
@@ -72,7 +67,6 @@ const expoConfig = {
     "reactCompiler": true
   },
   extra: {
-    apiUrl: process.env.API_URL,
     eas: {
       projectId: "4e24bdfa-490c-4c3e-9a76-7abef4efa823",
     },

@@ -1,3 +1,6 @@
+import * as SecureStore from "expo-secure-store";
+SecureStore.getItem("API_URL") ?? SecureStore.setItem("API_URL", "https://musubi.frgtn.dev");
+
 import { useEffect } from 'react';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { SplashScreen } from 'expo-router';
@@ -11,6 +14,7 @@ import { authClient } from '@/services/auth-client';
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+
   const [loaded, error] = useFonts({
     InterTight_400Regular,
     InterTight_500Medium,

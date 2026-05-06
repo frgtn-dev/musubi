@@ -1,18 +1,49 @@
 import { colors, fonts, styles } from "@/constants/theme";
 import { useRouter } from "expo-router";
+import { useState } from "react";
 import { View, Text, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import InputModal from "@/components/TextInputModal";
+import * as SecureStore from "expo-secure-store";
+import { updateAuthClient } from "@/services/auth-client";
 
 
 export default function Welcome() {
+  const [apiServer, setApiServer] = useState(SecureStore.getItem("API_URL"));
+  const [inputModalVisible, setInputModalVisible] = useState(false);
   const router = useRouter();
+
+  const testApiUrl = async (value: string) => {
+    let result;
+
+    try {
+      result = await fetch(`${value}/api/server/ok`);
+    } catch (err) {
+      return { ok: false, error: "Invalid URL..." }
+    }
+
+    if (result.ok) {
+      const data = await result.json();
+      if (data.ok) {
+        return { ok: true, error: "" };
+      }
+    }
+
+    return { ok: false, error: "Invalid Api Server Url..." };
+  }
+
+  const handleSetServer = (server: string) => {
+    SecureStore.setItem("API_URL", server);
+    updateAuthClient();
+    setApiServer(server);
+  }
 
   return (
     <SafeAreaView style={styles.screen} edges={["top", "left", "right"]}>
       <View style={{ alignItems: "center", justifyContent: "space-between", flex: 1, paddingTop: 60, paddingBottom: 60 }}>
         <View style={{ alignItems: "center", justifyContent: "center" }}>
           <Text style={{ color: colors.fg, fontSize: 72, fontFamily: fonts.serif }}>
-            お結び
+            結び
           </Text>
           <Text style={{ color: colors.fg3 }}>
             MUSUBI
@@ -44,12 +75,27 @@ export default function Welcome() {
               Login
             </Text>
           </Pressable>
+          <Pressable
+            style={styles.btnSecondary}
+            onPress={() => setInputModalVisible(true)}
+          >
+            <Text style={styles.btnSecondaryText}>
+              Server: {apiServer}
+            </Text>
+          </Pressable>
           <Text style={{ fontFamily: fonts.sans, fontSize: 12, color: colors.fg4, textAlign: "center" }}>
             By continuing you accept the terms and
             our quiet privacy promise.
           </Text>
         </View>
       </View >
+      <InputModal
+        visible={inputModalVisible}
+        placeholder="https://your.api.server"
+        onClose={() => setInputModalVisible(false)}
+        onTest={(value) => testApiUrl(value)}
+        onConfirm={handleSetServer}
+      />
     </SafeAreaView >
   );
 }

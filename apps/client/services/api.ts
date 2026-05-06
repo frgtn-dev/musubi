@@ -1,12 +1,12 @@
 import { Calendar, Event, Invite, Settings } from "@/constants/types";
-import Constants from "expo-constants";
 import { authClient } from "./auth-client";
+import * as SecureStore from "expo-secure-store";
 
-const url = Constants.expoConfig?.extra?.apiUrl;
+const apiUrl = SecureStore.getItem("API_URL");
 
 export const api = {
   async createCalendar(calendar: Calendar) {
-    const { error, data } = await authClient.$fetch<Calendar>(`${url}/api/calendars`, {
+    const { error, data } = await authClient.$fetch<Calendar>(`${apiUrl}/api/calendars`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -30,7 +30,7 @@ export const api = {
   },
 
   async getCalendars() {
-    const { error, data } = await authClient.$fetch<Calendar[]>(`${url}/api/calendars`, {
+    const { error, data } = await authClient.$fetch<Calendar[]>(`${apiUrl}/api/calendars`, {
       method: "GET",
     });
 
@@ -39,7 +39,7 @@ export const api = {
   },
 
   async getCalendar(calendarID: string) {
-    const { error, data } = await authClient.$fetch<Calendar>(`${url}/api/calendars/${calendarID}`, {
+    const { error, data } = await authClient.$fetch<Calendar>(`${apiUrl}/api/calendars/${calendarID}`, {
       method: "GET",
     });
 
@@ -48,7 +48,7 @@ export const api = {
   },
 
   async getCalendarFromToken(token: string) {
-    const { error, data } = await authClient.$fetch<Calendar>(`${url}/api/calendars/tokens/${token}`, {
+    const { error, data } = await authClient.$fetch<Calendar>(`${apiUrl}/api/calendars/tokens/${token}`, {
       method: "GET",
     });
 
@@ -57,7 +57,7 @@ export const api = {
   },
 
   async createEvent(event: Event) {
-    const { error, data } = await authClient.$fetch<Event>(`${url}/api/events`, {
+    const { error, data } = await authClient.$fetch<Event>(`${apiUrl}/api/events`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -82,7 +82,7 @@ export const api = {
   },
 
   async updateCalendar(calendar: Calendar) {
-    const { error, data } = await authClient.$fetch<Calendar>(`${url}/api/calendars`, {
+    const { error, data } = await authClient.$fetch<Calendar>(`${apiUrl}/api/calendars`, {
       method: "PUT",
       headers: {
         "content-type": "application/json",
@@ -95,7 +95,7 @@ export const api = {
   },
 
   async removeCalendar(calendar: Calendar) {
-    const { error, data } = await authClient.$fetch<{ id: string }>(`${url}/api/calendars`, {
+    const { error, data } = await authClient.$fetch<{ id: string }>(`${apiUrl}/api/calendars`, {
       method: "DELETE",
       headers: {
         "content-type": "application/json",
@@ -109,7 +109,7 @@ export const api = {
   },
 
   async updateEvent(event: Event) {
-    const { error, data } = await authClient.$fetch<Event>(`${url}/api/events`, {
+    const { error, data } = await authClient.$fetch<Event>(`${apiUrl}/api/events`, {
       method: "PUT",
       headers: {
         "content-type": "application/json",
@@ -122,7 +122,7 @@ export const api = {
   },
 
   async removeEvent(event: Event) {
-    const { error, data } = await authClient.$fetch<{ id: string }>(`${url}/api/events`, {
+    const { error, data } = await authClient.$fetch<{ id: string }>(`${apiUrl}/api/events`, {
       method: "DELETE",
       headers: {
         "content-type": "application/json",
@@ -136,7 +136,7 @@ export const api = {
   },
 
   async getEvents() {
-    const { error, data } = await authClient.$fetch<{ events: Event[] }>(`${url}/api/events`, {
+    const { error, data } = await authClient.$fetch<{ events: Event[] }>(`${apiUrl}/api/events`, {
       method: "GET",
       headers: {
         "content-type": "application/json",
@@ -149,7 +149,7 @@ export const api = {
   },
 
   async createInvite(invite: Invite) {
-    const { error, data } = await authClient.$fetch<Invite>(`${url}/api/calendars/invites`, {
+    const { error, data } = await authClient.$fetch<Invite>(`${apiUrl}/api/calendars/invites`, {
       method: "POST",
       headers: {
         "content-type": "application/json",
@@ -163,7 +163,7 @@ export const api = {
   },
 
   async acceptInvite(calendarID: string) {
-    const { error, data } = await authClient.$fetch<Invite>(`${url}/api/calendars/members/${calendarID}`, {
+    const { error, data } = await authClient.$fetch<Invite>(`${apiUrl}/api/calendars/members/${calendarID}`, {
       method: "POST",
     });
 
@@ -173,7 +173,7 @@ export const api = {
   },
 
   async leaveCalendar(calendarID: string) {
-    const { error } = await authClient.$fetch(`${url}/api/calendars/members/${calendarID}`, {
+    const { error } = await authClient.$fetch(`${apiUrl}/api/calendars/members/${calendarID}`, {
       method: "DELETE",
     });
 
@@ -183,7 +183,7 @@ export const api = {
   },
 
   async getSettings() {
-    const { data, error } = await authClient.$fetch<Settings>(`${url}/api/users/settings`, {
+    const { data, error } = await authClient.$fetch<Settings>(`${apiUrl}/api/users/settings`, {
       method: "GET",
     });
 
@@ -194,7 +194,7 @@ export const api = {
 
   async saveSettings(settings: Settings) {
     console.log(settings);
-    const { error } = await authClient.$fetch(`${url}/api/users/settings`, {
+    const { error } = await authClient.$fetch(`${apiUrl}/api/users/settings`, {
       method: "PUT",
       headers: {
         "content-type": "application/json",
