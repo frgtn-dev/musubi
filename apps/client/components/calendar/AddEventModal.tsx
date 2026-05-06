@@ -22,8 +22,8 @@ export function AddEventModal({ visible, onClose, onSave, onEdit, calendars, eve
   const [newTitle, setNewTitle] = useState('');
   const [newStart, setNewStart] = useState(new Date());
   const [newEnd, setNewEnd] = useState(new Date());
-  const [showStartPicker, setShowStartPicker] = useState(false);
-  const [showEndPicker, setShowEndPicker] = useState(false);
+  // const [showStartPicker, setShowStartPicker] = useState(false);
+  // const [showEndPicker, setShowEndPicker] = useState(false);
   const [selectedCals, setSelectedCals] = useState<Set<string>>(
     () => new Set(calendars.slice(0, 1).map(c => c.id))
   );
@@ -62,6 +62,12 @@ export function AddEventModal({ visible, onClose, onSave, onEdit, calendars, eve
     }
   }, [event, visible]);
 
+  useEffect(() => {
+    if (newStart.getTime() > newEnd.getTime()) {
+      setNewEnd(newStart);
+    }
+  }, [newStart]);
+
   const toggleCal = (id: string) => {
     setSelectedCals(prev => {
       const next = new Set(prev);
@@ -70,7 +76,7 @@ export function AddEventModal({ visible, onClose, onSave, onEdit, calendars, eve
     });
   };
 
-  const showPicker = (mode: 'start' | 'end') => {
+  const showDatePicker = (mode: 'start' | 'end') => {
     const current = mode === 'start' ? newStart : newEnd;
     const setter = mode === 'start' ? setNewStart : setNewEnd;
 
@@ -80,22 +86,37 @@ export function AddEventModal({ visible, onClose, onSave, onEdit, calendars, eve
         mode: 'date',
         onChange: (e, date) => {
           if (e.type === 'set' && date) {
-            DateTimePickerAndroid.open({
-              value: date,
-              mode: 'time',
-              onChange: (e2, finalDate) => {
-                if (e2.type === 'set' && finalDate) setter(finalDate);
-              },
-            });
+            setter(date);
           }
         },
       });
-    } else {
-      mode === 'start' ? setShowStartPicker(true) : setShowEndPicker(true);
     }
   };
 
+  const showTimePicker = (mode: 'start' | 'end') => {
+    const current = mode === 'start' ? newStart : newEnd;
+    const setter = mode === 'start' ? setNewStart : setNewEnd;
 
+    if (Platform.OS === 'android') {
+      DateTimePickerAndroid.open({
+        value: roundMinutes(current),
+        mode: 'time',
+        onChange: (e, timeDate) => {
+          if (e.type === 'set' && timeDate) {
+            setter(timeDate);
+          }
+        },
+      });
+    }
+  };
+
+  function roundMinutes(date: Date) {
+
+    date.setHours(date.getHours() + Math.round(date.getMinutes() / 60));
+    date.setMinutes(0, 0, 0);
+
+    return date;
+  }
 
   const handleSave = async () => {
 
@@ -241,34 +262,54 @@ export function AddEventModal({ visible, onClose, onSave, onEdit, calendars, eve
                   </ScrollView>
                 </View>
 
-
-                <Pressable style={styles.fieldContainer} onPress={() => showPicker("start")}>
-                  <Text style={[styles.fieldLabel, { fontFamily: fonts.sans }]}>Start</Text>
-                  <Text style={[styles.fieldValueText, { fontFamily: fonts.sans }]}>
-                    {newStart.toLocaleString('en-UK', { dateStyle: 'medium', timeStyle: 'short' })}
-                  </Text>
+                <View style={styles.fieldContainer}>
+                  <View style={{ flexDirection: "row", gap: 32 }}>
+                    <Pressable onPress={() => showDatePicker("start")}>
+                      <Text style={[styles.fieldLabel, { fontFamily: fonts.sans }]}>Start Date</Text>
+                      <Text style={[styles.fieldValueText, { fontFamily: fonts.sans }]}>
+                        {newStart.toLocaleString('en-UK', { dateStyle: 'medium' })}
+                      </Text>
+                    </Pressable>
+                    <Pressable onPress={() => showTimePicker("start")}>
+                      <Text style={[styles.fieldLabel, { fontFamily: fonts.sans }]}>Time</Text>
+                      <Text style={[styles.fieldValueText, { fontFamily: fonts.sans }]}>
+                        {newStart.toLocaleString('en-UK', { timeStyle: 'short' })}
+                      </Text>
+                    </Pressable>
+                  </View>
                   {startError ? <Text style={styles.errorText}>{startError}</Text> : null}
-                </Pressable>
+                </View>
 
-                {Platform.OS === 'ios' && showStartPicker && (
-                  <DateTimePicker value={newStart} mode="datetime"
-                    onChange={(e, date) => { setShowStartPicker(false); if (e.type === 'set' && date) setNewStart(date); }}
-                  />
-                )}
+                {/* {Platform.OS === 'ios' && showStartPicker && ( */}
+                {/*   <DateTimePicker value={newStart} mode="datetime" */}
+                {/*     onChange={(e, date) => { setShowStartPicker(false); if (e.type === 'set' && date) setNewStart(date); }} */}
+                {/*   /> */}
+                {/* )} */}
 
-                <Pressable style={styles.fieldContainer} onPress={() => showPicker("end")}>
-                  <Text style={[styles.fieldLabel, { fontFamily: fonts.sans }]}>End</Text>
-                  <Text style={[styles.fieldValueText, { fontFamily: fonts.sans }]}>
-                    {newEnd.toLocaleString('en-UK', { dateStyle: 'medium', timeStyle: 'short' })}
-                  </Text>
+                <View style={styles.fieldContainer}>
+                  <View style={{ flexDirection: "row", gap: 32 }}>
+                    <Pressable onPress={() => showDatePicker("end")}>
+                      <Text style={[styles.fieldLabel, { fontFamily: fonts.sans }]}>End Date</Text>
+                      <Text style={[styles.fieldValueText, { fontFamily: fonts.sans }]}>
+                        {newEnd.toLocaleString('en-UK', { dateStyle: 'medium' })}
+                      </Text>
+                    </Pressable>
+                    <Pressable onPress={() => showTimePicker("end")}>
+                      <Text style={[styles.fieldLabel, { fontFamily: fonts.sans }]}>Time</Text>
+                      <Text style={[styles.fieldValueText, { fontFamily: fonts.sans }]}>
+                        {newEnd.toLocaleString('en-UK', { timeStyle: 'short' })}
+                      </Text>
+                    </Pressable>
+                  </View>
                   {endError ? <Text style={styles.errorText}>{endError}</Text> : null}
-                </Pressable>
+                </View>
 
-                {Platform.OS === 'ios' && showEndPicker && (
-                  <DateTimePicker value={newEnd} mode="datetime"
-                    onChange={(e, date) => { setShowEndPicker(false); if (e.type === 'set' && date) setNewEnd(date); }}
-                  />
-                )}
+                {/* {Platform.OS === 'ios' && showEndPicker && ( */}
+                {/*   <DateTimePicker value={newEnd} mode="datetime" */}
+                {/*     onChange={(e, date) => { setShowEndPicker(false); if (e.type === 'set' && date) setNewEnd(date); }} */}
+                {/*   /> */}
+                {/* )} */}
+
               </ScrollView>
               <View style={styles.modalButtons}>
                 <Pressable style={styles.btnSecondary} onPress={handleClose}>
