@@ -84,6 +84,7 @@ export default function Welcome() {
       </View >
       <InputModal
         visible={inputModalVisible}
+        title="Api Server URL..."
         placeholder="https://your.api.server"
         onClose={() => setInputModalVisible(false)}
         onTest={(value) => testApiUrl(value)}

@@ -1,4 +1,5 @@
 import { SettingRowOptions, SettingRowToggle } from "@/components/SettingRow";
+import InputModal from "@/components/TextInputModal";
 import { colors, fonts, styles } from "@/constants/theme";
 import { Settings } from "@/constants/types";
 import { useServer } from "@/contexts/ServerContext";
@@ -22,6 +23,7 @@ export default function SettingsTab() {
     showKanji, setShowKanji,
   } = useSettingsStore();
 
+  const [confrimDeleteVisible, setConfirmDeleteVisible] = useState(false);
   const userSession = authClient.useSession();
   const [settingsChanged, setSettingsChanged] = useState(false);
 
@@ -35,6 +37,20 @@ export default function SettingsTab() {
     loadEvents([]);
     authClient.signOut();
   };
+
+  const handleUserDelete = () => {
+    loadCalendars([]);
+    loadEvents([]);
+    api.deleteUser();
+    authClient.signOut();
+  }
+
+  const testDeleteConfirm = async (v: string) => {
+    if (v === userSession.data?.user.name!) {
+      return { ok: true, error: "" }
+    }
+    return { ok: false, error: "Name does not match..." }
+  }
 
   return (
     <SafeAreaView style={styles.screen} edges={["top", "left", "right"]}>
@@ -79,14 +95,6 @@ export default function SettingsTab() {
               {userSession.data?.user.email}
             </Text>
           </View>
-          <Pressable
-            style={styles.btnRemove}
-            onPress={handleSignOut}
-          >
-            <Text style={styles.btnPrimaryText}>
-              Sign Out
-            </Text>
-          </Pressable>
         </View>
         <SettingRowToggle
           label="Show Kanji"
@@ -114,6 +122,33 @@ export default function SettingsTab() {
             setSettingsChanged(true);
           }}
         />
+        <View
+          style={{
+            paddingHorizontal: 16,
+            paddingVertical: 16,
+            borderBottomWidth: 1,
+            borderTopWidth: 1,
+            borderColor: colors.line,
+            gap: 16
+          }}
+        >
+          <Pressable
+            style={styles.btnPrimary}
+            onPress={handleSignOut}
+          >
+            <Text style={styles.btnPrimaryText}>
+              Sign Out
+            </Text>
+          </Pressable>
+          <Pressable
+            style={styles.btnRemove}
+            onPress={() => setConfirmDeleteVisible(true)}
+          >
+            <Text style={styles.btnPrimaryText}>
+              Delete Account
+            </Text>
+          </Pressable>
+        </View>
       </ScrollView>
       {settingsChanged &&
         <Pressable
@@ -128,6 +163,14 @@ export default function SettingsTab() {
           <Text style={{ color: colors.bg, fontSize: 16, lineHeight: 30 }}>Save Settings</Text>
         </Pressable>
       }
+      <InputModal
+        visible={confrimDeleteVisible}
+        title="To delete your account, write you name..."
+        placeholder={userSession.data?.user.name!}
+        onClose={() => setConfirmDeleteVisible(false)}
+        onTest={(value) => testDeleteConfirm(value)}
+        onConfirm={handleUserDelete}
+      />
     </SafeAreaView >
   );
 }

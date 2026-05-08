@@ -195,7 +195,6 @@ export function useApi() {
     },
 
     async saveSettings(settings: Settings) {
-      console.log(settings);
       const { error } = await authClient.$fetch(`${apiUrl}/api/users/settings`, {
         method: "PUT",
         headers: {
@@ -208,5 +207,15 @@ export function useApi() {
 
       return true;
     },
+
+    async deleteUser() {
+      const { error } = await authClient.$fetch(`${apiUrl}/api/users`, {
+        method: "DELETE",
+      });
+
+      if (error) throw new Error(error.message ?? error.statusText);
+
+      return true;
+    }
   }
 };

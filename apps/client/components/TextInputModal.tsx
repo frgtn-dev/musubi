@@ -7,6 +7,8 @@ import { useState } from "react";
 
 type Props = {
   visible: boolean,
+  isDelete?: boolean,
+  title: string,
   placeholder: string,
   onConfirm: (value: string) => void,
   onClose: () => void,
@@ -14,7 +16,7 @@ type Props = {
 }
 
 
-export default function InputModal({ visible, placeholder, onConfirm, onClose, onTest }: Props) {
+export default function InputModal({ visible, isDelete, title, placeholder, onConfirm, onClose, onTest }: Props) {
   const { fadeStyle, handleClose } = useModalAnimation(visible, onClose);
   const [inputValue, setInputValue] = useState("");
   const [valueError, setValueError] = useState("");
@@ -60,6 +62,7 @@ export default function InputModal({ visible, placeholder, onConfirm, onClose, o
             borderRadius: 15,
           }}
         >
+          <Text style={{ color: colors.fg }}>{title}</Text>
           <TextInput
             style={{
               width: "100%",
@@ -84,10 +87,10 @@ export default function InputModal({ visible, placeholder, onConfirm, onClose, o
               <Text style={styles.btnSecondaryText}>Cancel</Text>
             </Pressable>
             <Pressable
-              style={styles.btnPrimary}
+              style={isDelete ? styles.btnRemove : styles.btnPrimary}
               onPress={() => handleConfirm(inputValue)}
             >
-              <Text style={styles.btnPrimaryText}>Confirm</Text>
+              <Text style={styles.btnPrimaryText}>{isDelete ? "Delete" : "Confirm"}</Text>
             </Pressable>
           </View>
         </View>

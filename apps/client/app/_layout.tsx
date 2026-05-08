@@ -1,5 +1,6 @@
 import { ServerProvider, useServer } from '@/contexts/ServerContext';
 import { useEffect } from 'react';
+import { View } from 'react-native';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { SplashScreen } from 'expo-router';
 import { useFonts } from 'expo-font';
@@ -47,13 +48,17 @@ function AppContent() {
   if (!loaded && !error || isPending) return null;
 
   return (
-    < Stack screenOptions={{ headerShown: false }} />
+    <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: '#050507' } }} />
   );
 }
 
 function AppLoader() {
   const { apiUrl } = useServer();
-  return <AppContent key={apiUrl ?? 'loading'} />;
+  return (
+    <View style={{ flex: 1, backgroundColor: '#050507' }}>
+      <AppContent key={apiUrl ?? 'loading'} />
+    </View>
+  );
 }
 
 export default function RootLayout() {
