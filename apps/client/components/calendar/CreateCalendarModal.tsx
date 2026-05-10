@@ -6,6 +6,7 @@ import { useModalAnimation } from "@/hooks/useModalAnimation";
 import { useEffect, useState } from "react";
 import { Text, Modal, Pressable, ScrollView, View, TextInput } from "react-native";
 import { GestureDetector, GestureHandlerRootView } from "react-native-gesture-handler";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated from "react-native-reanimated";
 
 
@@ -19,6 +20,7 @@ type Props = {
 
 
 export default function CreateCalendarModal({ calendar, visible, onClose, onCreate, onEdit }: Props) {
+  const insets = useSafeAreaInsets();
   const { authClient } = useServer();
   const [newName, setNewName] = useState("");
   const [newColor, setNewColor] = useState(appColors[0].color);
@@ -138,7 +140,7 @@ export default function CreateCalendarModal({ calendar, visible, onClose, onCrea
                   </ScrollView>
                 </View>
               </ScrollView>
-              <View style={styles.modalButtons}>
+              <View style={[styles.modalButtons, { paddingBottom: insets.bottom + 16 }]}>
                 <Pressable style={styles.btnSecondary} onPress={handleClose}>
                   <Text style={styles.btnSecondaryText}>Cancel</Text>
                 </Pressable>

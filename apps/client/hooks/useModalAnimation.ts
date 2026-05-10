@@ -24,7 +24,7 @@ export function useModalAnimation(visible: boolean, onClose: () => void) {
       }
     });
 
-  function handleClose() {
+  async function handleClose() {
     slideAnim.value = withTiming(offScreen, { duration: 280 });
     fadeAnim.value = withTiming(0, { duration: 180 }, () => scheduleOnRN(onClose));
   }

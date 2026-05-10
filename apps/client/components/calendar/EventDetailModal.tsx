@@ -4,6 +4,7 @@ import { useModalAnimation } from "@/hooks/useModalAnimation";
 import { Feather } from "@expo/vector-icons";
 import { Modal, Pressable, Text, View, ScrollView } from "react-native"
 import Animated from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useCalendarsStore } from "@/store/useCalendarsStore";
 import { GestureDetector, GestureHandlerRootView } from "react-native-gesture-handler";
 
@@ -19,6 +20,7 @@ type Props = {
 export default function EventDetailModal({ event, visible, onClose, onDelete, onEdit }: Props) {
   const { calendars } = useCalendarsStore();
 
+  const insets = useSafeAreaInsets();
   const { slideStyle, fadeStyle, gesture, handleClose } = useModalAnimation(visible, onClose);
 
   return (
@@ -80,6 +82,7 @@ export default function EventDetailModal({ event, visible, onClose, onDelete, on
                 justifyContent: "space-between",
                 borderTopWidth: 1,
                 borderColor: colors.line,
+                paddingBottom: insets.bottom,
               }}
             >
               <Pressable

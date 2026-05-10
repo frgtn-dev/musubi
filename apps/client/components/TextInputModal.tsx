@@ -20,18 +20,29 @@ export default function InputModal({ visible, isDelete, title, placeholder, onCo
   const { fadeStyle, handleClose } = useModalAnimation(visible, onClose);
   const [inputValue, setInputValue] = useState("");
   const [valueError, setValueError] = useState("");
+  const [isWaiting, setIsWaiting] = useState(false);
 
   const handleConfirm = async (value: string) => {
+    setIsWaiting(true);
     if (onTest) {
       const { ok, error } = await onTest(value);
       if (!ok) {
         setValueError(error ?? "Uknown error...");
+        setIsWaiting(false);
         return;
       }
-      onConfirm(value);
-      handleClose();
     }
-  }
+    onConfirm(value);
+    handleClose();
+    setIsWaiting(false);
+  };
+
+  const handleCancel = async () => {
+    handleClose();
+    setInputValue("");
+    setValueError("");
+    setIsWaiting(false);
+  };
 
   return (
     <Modal
@@ -83,11 +94,12 @@ export default function InputModal({ visible, isDelete, title, placeholder, onCo
             gap: 16,
           }}
           >
-            <Pressable style={styles.btnSecondary} onPress={handleClose}>
+            <Pressable style={styles.btnSecondary} onPress={handleCancel}>
               <Text style={styles.btnSecondaryText}>Cancel</Text>
             </Pressable>
             <Pressable
-              style={isDelete ? styles.btnRemove : styles.btnPrimary}
+              style={isWaiting ? styles.btnDisabled : (isDelete ? styles.btnRemove : styles.btnPrimary)}
+              disabled={isWaiting}
               onPress={() => handleConfirm(inputValue)}
             >
               <Text style={styles.btnPrimaryText}>{isDelete ? "Delete" : "Confirm"}</Text>

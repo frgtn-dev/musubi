@@ -2,7 +2,6 @@ import { colors, fonts, styles } from "@/constants/theme";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { View, Text, Pressable } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import InputModal from "@/components/TextInputModal";
 import { useServer } from "@/contexts/ServerContext";
 
@@ -32,8 +31,8 @@ export default function Welcome() {
   }
 
   return (
-    <SafeAreaView style={styles.screen} edges={["top", "left", "right"]}>
-      <View style={{ alignItems: "center", justifyContent: "space-between", flex: 1, paddingTop: 60, paddingBottom: 60 }}>
+    <View style={styles.screen}>
+      <View style={{ alignItems: "center", justifyContent: "space-between", flex: 1, paddingTop: 60 }}>
         <View style={{ alignItems: "center", justifyContent: "center" }}>
           <Text style={{ color: colors.fg, fontSize: 72, fontFamily: fonts.serif }}>
             結び
@@ -90,6 +89,6 @@ export default function Welcome() {
         onTest={(value) => testApiUrl(value)}
         onConfirm={setNewServerUrl}
       />
-    </SafeAreaView >
+    </View>
   );
 }

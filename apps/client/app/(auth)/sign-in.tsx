@@ -3,7 +3,6 @@ import { useServer } from "@/contexts/ServerContext";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { View, Text, TextInput, Pressable, Alert } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 
 export default function SignIn() {
@@ -53,8 +52,8 @@ export default function SignIn() {
   };
 
   return (
-    <SafeAreaView style={styles.screen} edges={["top", "left", "right"]}>
-      <View style={{ justifyContent: "space-between", flex: 1, paddingBottom: 28 }}>
+    <View style={styles.screen}>
+      <View style={{ justifyContent: "space-between", flex: 1 }}>
         <View style={[{ gap: 28 }, styles.container]}>
           <View>
             <Text style={{ color: colors.fg3 }} >
@@ -94,7 +93,16 @@ export default function SignIn() {
         </View>
         <View style={styles.modalButtonsColumn}>
           <Pressable
-            style={isLoading ? [styles.btnPrimary, { backgroundColor: colors.line }] : styles.btnPrimary}
+            style={isLoading ? styles.btnDisabled : styles.btnSecondary}
+            disabled={isLoading}
+            onPress={() => { }}
+          >
+            <Text style={styles.btnSecondaryText}>
+              Forgotten password?
+            </Text>
+          </Pressable>
+          <Pressable
+            style={isLoading ? styles.btnDisabled : styles.btnPrimary}
             disabled={isLoading}
             onPress={() => handleSignIn()}
           >
@@ -104,6 +112,6 @@ export default function SignIn() {
           </Pressable>
         </View>
       </View>
-    </SafeAreaView >
+    </View>
   );
 }

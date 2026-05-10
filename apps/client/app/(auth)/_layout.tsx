@@ -1,4 +1,5 @@
 
+import { colors } from '@/constants/theme';
 import { Stack } from 'expo-router';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
@@ -6,7 +7,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 export default function TabLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: '#050507' } }} />
+      <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.bg } }} />
     </GestureHandlerRootView>
   );
 }

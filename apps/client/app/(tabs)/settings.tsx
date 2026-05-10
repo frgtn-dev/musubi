@@ -7,9 +7,9 @@ import { useApi } from "@/services/api";
 import { useCalendarsStore } from "@/store/useCalendarsStore";
 import { useEventsStore } from "@/store/useEventsStore";
 import { useSettingsStore } from "@/store/useSettingsStore";
+import { router } from "expo-router";
 import { useState } from "react";
 import { View, Text, ScrollView, Pressable } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 
 export default function SettingsTab() {
@@ -35,7 +35,13 @@ export default function SettingsTab() {
   const handleSignOut = () => {
     loadCalendars([]);
     loadEvents([]);
-    authClient.signOut();
+    authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          router.dismissAll();
+        }
+      }
+    });
   };
 
   const handleUserDelete = () => {
@@ -53,7 +59,7 @@ export default function SettingsTab() {
   }
 
   return (
-    <SafeAreaView style={styles.screen} edges={["top", "left", "right"]}>
+    <View style={styles.screen}>
       <View style={styles.header}>
         <Text style={{ fontFamily: fonts.serif, fontSize: 26, color: colors.fg }}>
           Settings
@@ -171,6 +177,6 @@ export default function SettingsTab() {
         onTest={(value) => testDeleteConfirm(value)}
         onConfirm={handleUserDelete}
       />
-    </SafeAreaView >
+    </View>
   );
 }

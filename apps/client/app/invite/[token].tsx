@@ -5,7 +5,6 @@ import { useCalendarsStore } from "@/store/useCalendarsStore";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { ScrollView, TouchableOpacity, View, Text, StyleSheet } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 function Avatar({ label, size = 36 }: { label: string; size?: number }) {
   return (
@@ -32,7 +31,7 @@ export default function Invite() {
   }, []);
 
   return (
-    <SafeAreaView style={styles.screen}>
+    <View style={styles.screen}>
 
       <ScrollView contentContainerStyle={{ paddingBottom: 24 }} showsVerticalScrollIndicator={false}>
 
@@ -119,7 +118,7 @@ export default function Invite() {
           <Text style={styles.btnPrimaryText}>✓  Accept invitation</Text>
         </TouchableOpacity>
       </View>
-    </SafeAreaView >
+    </View>
   );
 }
 

@@ -2,6 +2,7 @@ import { colors, fonts, styles } from "@/constants/theme";
 import { useEffect, useState } from "react";
 import { Alert, Modal, Platform, Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import Animated from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import DateTimePicker, { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import { useModalAnimation } from "@/hooks/useModalAnimation";
 import { Calendar, Event } from "@/constants/types";
@@ -19,6 +20,7 @@ type Props = {
 };
 
 export function AddEventModal({ visible, onClose, onSave, onEdit, calendars, event }: Props) {
+  const insets = useSafeAreaInsets();
   const { authClient } = useServer();
   const [newTitle, setNewTitle] = useState('');
   const [newStart, setNewStart] = useState(new Date());
@@ -312,7 +314,7 @@ export function AddEventModal({ visible, onClose, onSave, onEdit, calendars, eve
                 {/* )} */}
 
               </ScrollView>
-              <View style={styles.modalButtons}>
+              <View style={[styles.modalButtons, { paddingBottom: insets.bottom + 16 }]}>
                 <Pressable style={styles.btnSecondary} onPress={handleClose}>
                   <Text style={styles.btnSecondaryText}>Cancel</Text>
                 </Pressable>

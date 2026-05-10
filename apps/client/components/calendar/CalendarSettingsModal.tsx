@@ -3,6 +3,7 @@ import { useModalAnimation } from "@/hooks/useModalAnimation";
 import { Feather } from "@expo/vector-icons";
 import { Modal, Pressable, Text, View, ScrollView, Share } from "react-native"
 import Animated from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { GestureDetector, GestureHandlerRootView } from "react-native-gesture-handler";
 import { Calendar, Invite } from "@/constants/types";
 import { useCalendarsStore } from "@/store/useCalendarsStore";
@@ -25,6 +26,7 @@ export default function CalendarSettingsModal({ calendar, visible, onClose, onDe
   const { authClient } = useServer();
   const [waitingForInvite, setWaitingForInvite] = useState(false);
 
+  const insets = useSafeAreaInsets();
   const { slideStyle, fadeStyle, gesture, handleClose } = useModalAnimation(visible, onClose);
   const { loadCalendars } = useCalendarsStore();
   const { data: session } = authClient.useSession();
@@ -81,6 +83,7 @@ export default function CalendarSettingsModal({ calendar, visible, onClose, onDe
                 justifyContent: "space-between",
                 borderTopWidth: 1,
                 borderColor: colors.line,
+                paddingBottom: insets.bottom,
               }}
             >
               <Pressable

@@ -3,7 +3,6 @@ import { useServer } from "@/contexts/ServerContext";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { View, Text, TextInput, Pressable, Alert } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 
 export default function SignUp() {
@@ -71,8 +70,8 @@ export default function SignUp() {
   };
 
   return (
-    <SafeAreaView style={styles.screen} edges={["top", "left", "right"]}>
-      <View style={{ justifyContent: "space-between", flex: 1, paddingBottom: 28 }}>
+    <View style={styles.screen}>
+      <View style={{ justifyContent: "space-between", flex: 1 }}>
         <View style={[{ gap: 28 }, styles.container]}>
           <View>
             <Text style={{ color: colors.fg3 }} >
@@ -150,6 +149,6 @@ export default function SignUp() {
           </Pressable>
         </View>
       </View>
-    </SafeAreaView >
+    </View>
   );
 }

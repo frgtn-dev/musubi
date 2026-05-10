@@ -5,7 +5,6 @@ import { CalendarHeader } from "@/components/calendar/CalendarHeader";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import { Calendar, Mode } from "react-native-big-calendar";
-import { SafeAreaView } from "react-native-safe-area-context";
 import EventDetailModal from "@/components/calendar/EventDetailModal";
 import { Event } from "@/constants/types";
 import { useEventsStore } from "@/store/useEventsStore";
@@ -64,7 +63,7 @@ export default function MainTab() {
 
   return (
 
-    <SafeAreaView style={styles.screen} edges={["top", "left", "right"]}>
+    <View style={styles.screen}>
       <CalendarHeader
         anchorDate={anchorDate}
         calMode={calMode}
@@ -121,6 +120,6 @@ export default function MainTab() {
         onEdit={(event: Event) => handlerEventEdit(event)}
         event={eventDetail}
       />
-    </SafeAreaView>
+    </View>
   );
 }

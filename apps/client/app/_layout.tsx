@@ -7,6 +7,8 @@ import { useFonts } from 'expo-font';
 import { InterTight_400Regular, InterTight_500Medium } from '@expo-google-fonts/inter-tight';
 import { NotoSerif_400Regular } from '@expo-google-fonts/noto-serif';
 import { ShipporiMinchoB1_400Regular } from '@expo-google-fonts/shippori-mincho-b1';
+import { colors, styles } from '@/constants/theme';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 SplashScreen.preventAutoHideAsync();
@@ -48,16 +50,18 @@ function AppContent() {
   if (!loaded && !error || isPending) return null;
 
   return (
-    <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: '#050507' } }} />
+    <Stack screenOptions={{ statusBarStyle: "auto", navigationBarHidden: true, headerShown: false, contentStyle: { backgroundColor: colors.bg } }} />
   );
 }
 
 function AppLoader() {
   const { apiUrl } = useServer();
   return (
-    <View style={{ flex: 1, backgroundColor: '#050507' }}>
-      <AppContent key={apiUrl ?? 'loading'} />
-    </View>
+    <SafeAreaView style={styles.screen} >
+      <View style={{ flex: 1, backgroundColor: colors.bg }}>
+        <AppContent key={apiUrl ?? 'loading'} />
+      </View>
+    </SafeAreaView>
   );
 }
 

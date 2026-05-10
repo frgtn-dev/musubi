@@ -162,6 +162,8 @@ export const styles = StyleSheet.create({
     flexDirection: 'column',
     alignSelf: "stretch",
     alignItems: "stretch",
+    justifyContent: "flex-end",
+    flex: 1,
     gap: 10,
     padding: 16,
   },

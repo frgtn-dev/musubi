@@ -8,7 +8,6 @@ import { useCalendarsStore } from "@/store/useCalendarsStore";
 import { useEventsStore } from "@/store/useEventsStore";
 import { useEffect, useMemo, useState } from "react";
 import { View, Text, ScrollView, Pressable } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 
 
@@ -58,7 +57,7 @@ export default function AgendaTab() {
   }
 
   return (
-    <SafeAreaView style={styles.screen} edges={["top", "left", "right"]}>
+    <View style={styles.screen}>
       <View style={styles.header}>
         <Text style={{ fontFamily: fonts.serif, fontSize: 26, color: colors.fg }}>
           Agenda
@@ -157,6 +156,6 @@ export default function AgendaTab() {
         onEdit={(event: Event) => handlerEventEdit(event)}
         event={eventDetail}
       />
-    </SafeAreaView >
+    </View>
   );
 }

@@ -9,7 +9,6 @@ import { useEventsStore } from "@/store/useEventsStore";
 import { Feather } from "@expo/vector-icons";
 import { useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 
 export default function CalendarsTab() {
@@ -26,7 +25,7 @@ export default function CalendarsTab() {
   }
 
   return (
-    <SafeAreaView style={styles.screen} edges={["top", "left", "right"]}>
+    <View style={styles.screen}>
       <View style={styles.header}>
         <Text style={{ fontFamily: fonts.serif, fontSize: 26, color: colors.fg }}>
           Calendars
@@ -80,6 +79,6 @@ export default function CalendarsTab() {
           removeCalendar(calendar, api);
         }}
       />
-    </SafeAreaView >
+    </View>
   );
 }

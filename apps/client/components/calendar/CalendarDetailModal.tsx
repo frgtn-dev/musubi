@@ -5,6 +5,7 @@ import { useModalAnimation } from "@/hooks/useModalAnimation";
 import { useEventsStore } from "@/store/useEventsStore";
 import { useCallback, useMemo, useState } from "react";
 import { Modal, Text, Pressable, View, Dimensions } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated from "react-native-reanimated";
 import { Mode } from "react-native-big-calendar";
 import { Calendar as BigCalendar } from "react-native-big-calendar";
@@ -53,6 +54,7 @@ export default function CalendarDetail({ calendar, visible, onClose, onDelete, o
   const [eventDetail, setEventDetail] = useState<Event | null>(null);
   const [calendarSettings, setCallendarSettings] = useState<Calendar | null>(null);
 
+  const insets = useSafeAreaInsets();
   const { slideStyle, fadeStyle, gesture, handleClose } = useModalAnimation(visible, onClose);
 
   const onModeChange = (mode: Mode) => {
@@ -194,7 +196,7 @@ export default function CalendarDetail({ calendar, visible, onClose, onDelete, o
                 )}
               </View>
             </View>
-            <Pressable style={styles.fab}
+            <Pressable style={[styles.fab, { bottom: 16 + insets.bottom }]}
               onPress={() => {
                 setPrefilledEvent(undefined);
                 setNewEventVisible(true);
