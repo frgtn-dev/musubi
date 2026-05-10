@@ -53,7 +53,7 @@ const smtpConfig: SMTPConfig = {
   port: Number(envOrThrow("SMTP_PORT")),
   user: envOrThrow("SMTP_USER"),
   pass: envOrThrow("SMTP_PASS"),
-  from: envOrThrow("SMTP_EMAIL"),
+  from: envOrThrow("FROM_EMAIL"),
 }
 
 export const config: Config = {
