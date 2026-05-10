@@ -25,7 +25,6 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     sendResetPassword: async ({ user, token }, request) => {
-      console.log("Sending URL...");
       const customUrl = `https://musubi.frgtn.dev/reset-password/?token=${token}&callback=${config.api.url}`
       await sendEmail(user.email, "Reset your password", getPasswordResetHtml(user.name, customUrl, "1 hour"));
     },

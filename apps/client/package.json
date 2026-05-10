@@ -6,7 +6,7 @@
   "author": "frgtn.dev",
   "license": "MIT",
   "scripts": {
-    "dev": "expo start --clear",
+    "dev": "expo start --clear --localhost",
     "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo run:android",
