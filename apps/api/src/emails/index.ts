@@ -1,22 +1,23 @@
-import { envOrThrow } from "@musubi/config";
+import { config } from "@musubi/config";
 import nodemailer from "nodemailer";
 
 export async function sendEmail(to: string, subject: string, html: string) {
   try {
     // Create transport
+    console.log("Creating transporter...");
     const transporter = nodemailer.createTransport({
-      host: envOrThrow("SMTP_HOST"),
-      port: Number(envOrThrow("SMTP_PORT")),
-      secure: envOrThrow("SMTP_PORT") === "465" ? true : false, // false for TLS (587), true for SSL (465)
+      host: config.smtp.host,
+      port: config.smtp.port,
+      secure: config.smtp.port === 465 ? true : false, // false for TLS (587), true for SSL (465)
       auth: {
-        user: envOrThrow("SMTP_USER"),
-        pass: envOrThrow("SMTP_PASS"),
+        user: config.smtp.user,
+        pass: config.smtp.pass,
       },
     });
 
     // Define the email content
     const mailOptions = {
-      from: envOrThrow("FROM_EMAIL"),
+      from: config.smtp.from,
       to: to,
       subject: subject,
       html: html,

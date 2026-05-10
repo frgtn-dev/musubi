@@ -1,11 +1,12 @@
 import dotenv from "dotenv";
 import path from "path";
+import { env } from "process";
 import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, "../../../.env") });
 
-export function envOrThrow(key: string) {
+function envOrThrow(key: string) {
   const value = process.env[key];
   if (!value) {
     throw new Error(`Missing value from ENV on KEY: ${key}`);
@@ -23,9 +24,18 @@ type DBConfig = {
   databaseUrl: string,
 }
 
+type SMTPConfig = {
+  host: string,
+  port: number,
+  user: string,
+  pass: string,
+  from: string,
+}
+
 type Config = {
   api: APIConfig,
   db: DBConfig,
+  smtp: SMTPConfig,
 }
 
 const dbConfig: DBConfig = {
@@ -38,8 +48,17 @@ const apiConfig: APIConfig = {
   url: envOrThrow("BETTER_AUTH_URL"),
 }
 
+const smtpConfig: SMTPConfig = {
+  host: envOrThrow("SMTP_HOST"),
+  port: Number(envOrThrow("SMTP_PORT")),
+  user: envOrThrow("SMTP_USER"),
+  pass: envOrThrow("SMTP_PASS"),
+  from: envOrThrow("SMTP_EMAIL"),
+}
+
 export const config: Config = {
   api: apiConfig,
   db: dbConfig,
+  smtp: smtpConfig,
 }
 
