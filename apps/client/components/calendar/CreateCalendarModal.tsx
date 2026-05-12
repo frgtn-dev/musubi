@@ -8,6 +8,7 @@ import { Text, Modal, Pressable, ScrollView, View, TextInput } from "react-nativ
 import { GestureDetector, GestureHandlerRootView } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated from "react-native-reanimated";
+import { CALENDAR_HINTS } from "@/constants/calendar_hints";
 
 
 type Props = {
@@ -51,6 +52,13 @@ export default function CreateCalendarModal({ calendar, visible, onClose, onCrea
 
     if (newName.length === 0) {
       setNameError("You can do atleast one letter champ...");
+      passed = false;
+    } else {
+      setNameError("");
+    }
+
+    if (newName.length > 16) {
+      setNameError("Thats too much letters, don't you think... Keep it under 16 please...");
       passed = false;
     } else {
       setNameError("");
@@ -104,7 +112,7 @@ export default function CreateCalendarModal({ calendar, visible, onClose, onCrea
                   <TextInput
                     value={newName}
                     onChangeText={setNewName}
-                    placeholder="Dragon Slaying"
+                    placeholder={CALENDAR_HINTS[Math.floor(Math.random() * CALENDAR_HINTS.length)]}
                     placeholderTextColor={colors.fg4}
                     style={[styles.fieldValueBig, { fontFamily: fonts.sans }]}
                   />

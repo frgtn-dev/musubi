@@ -1,4 +1,4 @@
-import { colors, styles } from "@/constants/theme";
+import { colors, fonts, styles } from "@/constants/theme";
 import { useModalAnimation } from "@/hooks/useModalAnimation";
 import Animated from "react-native-reanimated";
 import { Modal, Pressable, TextInput, View, Text } from "react-native";
@@ -73,19 +73,21 @@ export default function InputModal({ visible, isDelete, title, placeholder, onCo
             borderRadius: 15,
           }}
         >
-          <Text style={{ color: colors.fg }}>{title}</Text>
+          <Text style={{ color: colors.fg, fontFamily: fonts.serif, fontSize: 18 }}>{title}</Text>
           <TextInput
             style={{
               width: "100%",
               padding: 12,
               borderWidth: 1,
-              borderBottomWidth: 1,
-              borderColor: colors.line,
+              borderColor: colors.line3,
               borderRadius: 10,
+              backgroundColor: colors.bg2,
               color: colors.fg,
+              fontFamily: fonts.sans,
+              fontSize: 15,
             }}
             placeholder={placeholder}
-            placeholderTextColor={colors.fg3}
+            placeholderTextColor={colors.fg4}
             onChangeText={(t) => setInputValue(t)}
           />
           {valueError ? <Text style={[styles.errorText, { alignSelf: "center" }]}>{valueError}</Text> : null}

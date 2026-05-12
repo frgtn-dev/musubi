@@ -53,6 +53,7 @@ export default function CalendarDetail({ calendar, visible, onClose, onDelete, o
   const [prefilledCalendar, setPreffiledCalendar] = useState<Calendar | undefined>(undefined);
   const [eventDetail, setEventDetail] = useState<Event | null>(null);
   const [calendarSettings, setCallendarSettings] = useState<Calendar | null>(null);
+  const [startingDate, setStartingDate] = useState<Date | undefined>(new Date());
 
   const insets = useSafeAreaInsets();
   const { slideStyle, fadeStyle, gesture, handleClose } = useModalAnimation(visible, onClose);
@@ -97,7 +98,7 @@ export default function CalendarDetail({ calendar, visible, onClose, onDelete, o
   const eventCellStyle = useCallback((e: Event) => ({ backgroundColor: e.color }), []);
 
   const activeCal = useMemo(() => calendar ? new Set<string>([calendar.id]) : new Set<string>(), [calendar]);
-  const { visibleEvents, enrichedEvents } = useVisibleEvents(events, activeCal);
+  const { visibleEvents } = useVisibleEvents(events, activeCal);
 
   return (
     <Modal
@@ -179,8 +180,6 @@ export default function CalendarDetail({ calendar, visible, onClose, onDelete, o
                   <BigCalendar
                     events={visibleEvents}
                     eventsAreSorted={true}
-                    enableEnrichedEvents={true}
-                    enrichedEventsByDate={enrichedEvents}
                     height={calMode === "month" ? calHeight : calHeight + 95}
                     theme={calendarTheme}
                     eventCellStyle={eventCellStyle}
@@ -209,6 +208,7 @@ export default function CalendarDetail({ calendar, visible, onClose, onDelete, o
       </GestureHandlerRootView>
       <AddEventModal
         visible={newEventVisible}
+        startingDate={startingDate}
         onClose={() => setNewEventVisible(false)}
         onSave={(e) => addEvent(e, api)}
         onEdit={(e) => updateEvent(e, api)}
@@ -225,7 +225,10 @@ export default function CalendarDetail({ calendar, visible, onClose, onDelete, o
       <CalendarSettingsModal
         calendar={calendarSettings}
         visible={calendarSettingsVisible}
-        onClose={() => setCalendarSettingsVisible(false)}
+        onClose={() => {
+          setCalendarSettingsVisible(false);
+          setStartingDate(undefined);
+        }}
         onDelete={(cal: Calendar) => handlerCalendarRemove(cal)}
         onEdit={(cal) => handlerCalendarEdit(cal)}
         onLeave={() => handleClose()}

@@ -9,9 +9,11 @@ import { Calendar, Event } from "@/constants/types";
 import { appColors } from "@/constants/colors";
 import { GestureDetector, GestureHandlerRootView } from "react-native-gesture-handler";
 import { useServer } from "@/contexts/ServerContext";
+import { EVENT_HINTS } from "@/constants/event_hints";
 
 type Props = {
   visible: boolean;
+  startingDate?: Date;
   onClose: () => void;
   onSave: (event: Event) => Promise<void>;
   onEdit: (event: Event) => Promise<void>;
@@ -19,12 +21,12 @@ type Props = {
   event?: Event;
 };
 
-export function AddEventModal({ visible, onClose, onSave, onEdit, calendars, event }: Props) {
+export function AddEventModal({ visible, startingDate, onClose, onSave, onEdit, calendars, event }: Props) {
   const insets = useSafeAreaInsets();
   const { authClient } = useServer();
   const [newTitle, setNewTitle] = useState('');
-  const [newStart, setNewStart] = useState(new Date());
-  const [newEnd, setNewEnd] = useState(new Date());
+  const [newStart, setNewStart] = useState(startingDate ?? new Date());
+  const [newEnd, setNewEnd] = useState(startingDate ?? new Date());
   // const [showStartPicker, setShowStartPicker] = useState(false);
   // const [showEndPicker, setShowEndPicker] = useState(false);
   const [selectedCals, setSelectedCals] = useState<Set<string>>(
@@ -59,8 +61,8 @@ export function AddEventModal({ visible, onClose, onSave, onEdit, calendars, eve
   useEffect(() => {
     if (visible) {
       setNewTitle(event?.title ?? "");
-      setNewStart(event?.start ?? new Date());
-      setNewEnd(event?.end ?? new Date());
+      setNewStart(event?.start ?? startingDate ?? new Date());
+      setNewEnd(event?.end ?? startingDate ?? new Date());
       setSelectedCals(new Set(event?.calendars) ?? new Set<string>);
     }
   }, [event, visible]);
@@ -189,145 +191,147 @@ export function AddEventModal({ visible, onClose, onSave, onEdit, calendars, eve
           <Animated.View style={[styles.modalOverlay, fadeStyle]}>
             <Pressable style={{ flex: 1 }} onPress={handleClose} />
           </Animated.View>
-          <GestureDetector gesture={gesture}>
-            <Animated.View style={[styles.modalSheet, fadeStyle, slideStyle]}>
-              <View style={styles.modalHandle} />
+          <Animated.View style={[styles.modalSheet, fadeStyle, slideStyle]}>
+            <GestureDetector gesture={gesture}>
+              <View>
+                <View style={styles.modalHandle} />
 
-              <View style={styles.modalTitleRow}>
-                <Text style={styles.modalTitle}>{event ? "Edit Event" : "New Event"}</Text>
+                <View style={styles.modalTitleRow}>
+                  <Text style={styles.modalTitle}>{event ? "Edit Event" : "New Event"}</Text>
+                </View>
+              </View>
+            </GestureDetector>
+            <ScrollView>
+              <View style={styles.fieldContainer}>
+                <Text style={[styles.fieldLabel, { fontFamily: fonts.sans }]}>Title</Text>
+                <TextInput
+                  value={newTitle}
+                  onChangeText={setNewTitle}
+                  placeholder={EVENT_HINTS[Math.floor(Math.random() * EVENT_HINTS.length)]}
+                  placeholderTextColor={colors.fg4}
+                  multiline={true}
+                  style={[styles.fieldValueBig, { fontFamily: fonts.sans }]}
+                />
+                {nameError ? <Text style={styles.errorText}>{nameError}</Text> : null}
               </View>
 
-              <ScrollView>
-                <View style={styles.fieldContainer}>
-                  <Text style={[styles.fieldLabel, { fontFamily: fonts.sans }]}>Title</Text>
-                  <TextInput
-                    value={newTitle}
-                    onChangeText={setNewTitle}
-                    placeholder="Stalking girls at night..."
-                    placeholderTextColor={colors.fg4}
-                    style={[styles.fieldValueBig, { fontFamily: fonts.sans }]}
-                  />
-                  {nameError ? <Text style={styles.errorText}>{nameError}</Text> : null}
-                </View>
-
-                <View style={styles.fieldContainer}>
-                  <Text style={[styles.fieldLabel, { fontFamily: fonts.sans }]}>Calendars</Text>
-                  <ScrollView
-                    horizontal
-                  >
-                    <View style={styles.horizontalPillView}>
-                      {calendars.map((cal) => {
-                        const active = selectedCals.has(cal.id);
-                        return (
-                          <Pressable
-                            key={cal.id}
-                            onPress={() => toggleCal(cal.id)}
-                            style={active ? styles.pillActive : styles.pill}
-                          >
-                            <View style={[styles.colorDot, { backgroundColor: cal.color, opacity: active ? 1 : 0.4 }]} />
-                            <Text style={{ fontFamily: fonts.sans, fontSize: 12, color: active ? colors.fg : colors.fg3 }}>
-                              {cal.name}
-                            </Text>
-                          </Pressable>
-                        );
-                      })}
-                    </View>
-                  </ScrollView>
-                  {calendarsError ? <Text style={styles.errorText}>{calendarsError}</Text> : null}
-                </View>
-
-                <View style={styles.fieldContainer}>
-                  <Text style={[styles.fieldLabel, { fontFamily: fonts.sans }]}>Colors</Text>
-                  <ScrollView
-                    horizontal
-                  >
-                    <View style={styles.horizontalPillView}>
-                      {appColors.map((c) => (
-                        <Pressable
-                          key={c.name}
-                          style={{
-                            overflow: "hidden",
-                            flexDirection: "row",
-                            justifyContent: "space-between",
-                            gap: 18,
-                          }}
-                          onPress={() => setNewColor(c.color)}
-                        >
-                          <View style={[styles.calendarCircle, {
-                            borderWidth: c.color === newColor ? 2 : 1,
-                            borderColor: c.color === newColor ? colors.fg3 : colors.line3,
-                          }]}>
-                            <View style={[styles.calendarCircleInner, { backgroundColor: c.color }]} />
-                          </View>
-                        </Pressable>
-                      ))}
-                    </View>
-                  </ScrollView>
-                </View>
-
-                <View style={styles.fieldContainer}>
-                  <View style={{ flexDirection: "row", gap: 32 }}>
-                    <Pressable onPress={() => showDatePicker("start")}>
-                      <Text style={[styles.fieldLabel, { fontFamily: fonts.sans }]}>Start Date</Text>
-                      <Text style={[styles.fieldValueText, { fontFamily: fonts.sans }]}>
-                        {newStart.toLocaleString('en-UK', { dateStyle: 'medium' })}
-                      </Text>
-                    </Pressable>
-                    <Pressable onPress={() => showTimePicker("start")}>
-                      <Text style={[styles.fieldLabel, { fontFamily: fonts.sans }]}>Time</Text>
-                      <Text style={[styles.fieldValueText, { fontFamily: fonts.sans }]}>
-                        {newStart.toLocaleString('en-UK', { timeStyle: 'short' })}
-                      </Text>
-                    </Pressable>
-                  </View>
-                  {startError ? <Text style={styles.errorText}>{startError}</Text> : null}
-                </View>
-
-                {/* {Platform.OS === 'ios' && showStartPicker && ( */}
-                {/*   <DateTimePicker value={newStart} mode="datetime" */}
-                {/*     onChange={(e, date) => { setShowStartPicker(false); if (e.type === 'set' && date) setNewStart(date); }} */}
-                {/*   /> */}
-                {/* )} */}
-
-                <View style={styles.fieldContainer}>
-                  <View style={{ flexDirection: "row", gap: 32 }}>
-                    <Pressable onPress={() => showDatePicker("end")}>
-                      <Text style={[styles.fieldLabel, { fontFamily: fonts.sans }]}>End Date</Text>
-                      <Text style={[styles.fieldValueText, { fontFamily: fonts.sans }]}>
-                        {newEnd.toLocaleString('en-UK', { dateStyle: 'medium' })}
-                      </Text>
-                    </Pressable>
-                    <Pressable onPress={() => showTimePicker("end")}>
-                      <Text style={[styles.fieldLabel, { fontFamily: fonts.sans }]}>Time</Text>
-                      <Text style={[styles.fieldValueText, { fontFamily: fonts.sans }]}>
-                        {newEnd.toLocaleString('en-UK', { timeStyle: 'short' })}
-                      </Text>
-                    </Pressable>
-                  </View>
-                  {endError ? <Text style={styles.errorText}>{endError}</Text> : null}
-                </View>
-
-                {/* {Platform.OS === 'ios' && showEndPicker && ( */}
-                {/*   <DateTimePicker value={newEnd} mode="datetime" */}
-                {/*     onChange={(e, date) => { setShowEndPicker(false); if (e.type === 'set' && date) setNewEnd(date); }} */}
-                {/*   /> */}
-                {/* )} */}
-
-              </ScrollView>
-              <View style={[styles.modalButtons, { paddingBottom: insets.bottom + 16 }]}>
-                <Pressable style={styles.btnSecondary} onPress={handleClose}>
-                  <Text style={styles.btnSecondaryText}>Cancel</Text>
-                </Pressable>
-                <Pressable
-                  style={isLoading ? [styles.btnPrimary, { backgroundColor: colors.line }] : styles.btnPrimary}
-                  onPress={handleSave}
-                  disabled={isLoading}
+              <View style={styles.fieldContainer}>
+                <Text style={[styles.fieldLabel, { fontFamily: fonts.sans }]}>Calendars</Text>
+                <ScrollView
+                  horizontal
                 >
-                  <Text style={styles.btnPrimaryText}>{event ? "Save" : "Create"}</Text>
-                </Pressable>
+                  <View style={styles.horizontalPillView}>
+                    {calendars.map((cal) => {
+                      const active = selectedCals.has(cal.id);
+                      return (
+                        <Pressable
+                          key={cal.id}
+                          onPress={() => toggleCal(cal.id)}
+                          style={active ? styles.pillActive : styles.pill}
+                        >
+                          <View style={[styles.colorDot, { backgroundColor: cal.color, opacity: active ? 1 : 0.4 }]} />
+                          <Text style={{ fontFamily: fonts.sans, fontSize: 12, color: active ? colors.fg : colors.fg3 }}>
+                            {cal.name}
+                          </Text>
+                        </Pressable>
+                      );
+                    })}
+                  </View>
+                </ScrollView>
+                {calendarsError ? <Text style={styles.errorText}>{calendarsError}</Text> : null}
               </View>
-            </Animated.View>
-          </GestureDetector>
+
+              <View style={styles.fieldContainer}>
+                <Text style={[styles.fieldLabel, { fontFamily: fonts.sans }]}>Colors</Text>
+                <ScrollView
+                  horizontal
+                >
+                  <View style={styles.horizontalPillView}>
+                    {appColors.map((c) => (
+                      <Pressable
+                        key={c.name}
+                        style={{
+                          overflow: "hidden",
+                          flexDirection: "row",
+                          justifyContent: "space-between",
+                          gap: 18,
+                        }}
+                        onPress={() => setNewColor(c.color)}
+                      >
+                        <View style={[styles.calendarCircle, {
+                          borderWidth: c.color === newColor ? 2 : 1,
+                          borderColor: c.color === newColor ? colors.fg3 : colors.line3,
+                        }]}>
+                          <View style={[styles.calendarCircleInner, { backgroundColor: c.color }]} />
+                        </View>
+                      </Pressable>
+                    ))}
+                  </View>
+                </ScrollView>
+              </View>
+
+              <View style={styles.fieldContainer}>
+                <View style={{ flexDirection: "row", gap: 32 }}>
+                  <Pressable onPress={() => showDatePicker("start")}>
+                    <Text style={[styles.fieldLabel, { fontFamily: fonts.sans }]}>Start Date</Text>
+                    <Text style={[styles.fieldValueText, { fontFamily: fonts.sans }]}>
+                      {newStart.toLocaleString('en-UK', { dateStyle: 'medium' })}
+                    </Text>
+                  </Pressable>
+                  <Pressable onPress={() => showTimePicker("start")}>
+                    <Text style={[styles.fieldLabel, { fontFamily: fonts.sans }]}>Time</Text>
+                    <Text style={[styles.fieldValueText, { fontFamily: fonts.sans }]}>
+                      {newStart.toLocaleString('en-UK', { timeStyle: 'short' })}
+                    </Text>
+                  </Pressable>
+                </View>
+                {startError ? <Text style={styles.errorText}>{startError}</Text> : null}
+              </View>
+
+              {/* {Platform.OS === 'ios' && showStartPicker && ( */}
+              {/*   <DateTimePicker value={newStart} mode="datetime" */}
+              {/*     onChange={(e, date) => { setShowStartPicker(false); if (e.type === 'set' && date) setNewStart(date); }} */}
+              {/*   /> */}
+              {/* )} */}
+
+              <View style={styles.fieldContainer}>
+                <View style={{ flexDirection: "row", gap: 32 }}>
+                  <Pressable onPress={() => showDatePicker("end")}>
+                    <Text style={[styles.fieldLabel, { fontFamily: fonts.sans }]}>End Date</Text>
+                    <Text style={[styles.fieldValueText, { fontFamily: fonts.sans }]}>
+                      {newEnd.toLocaleString('en-UK', { dateStyle: 'medium' })}
+                    </Text>
+                  </Pressable>
+                  <Pressable onPress={() => showTimePicker("end")}>
+                    <Text style={[styles.fieldLabel, { fontFamily: fonts.sans }]}>Time</Text>
+                    <Text style={[styles.fieldValueText, { fontFamily: fonts.sans }]}>
+                      {newEnd.toLocaleString('en-UK', { timeStyle: 'short' })}
+                    </Text>
+                  </Pressable>
+                </View>
+                {endError ? <Text style={styles.errorText}>{endError}</Text> : null}
+              </View>
+
+              {/* {Platform.OS === 'ios' && showEndPicker && ( */}
+              {/*   <DateTimePicker value={newEnd} mode="datetime" */}
+              {/*     onChange={(e, date) => { setShowEndPicker(false); if (e.type === 'set' && date) setNewEnd(date); }} */}
+              {/*   /> */}
+              {/* )} */}
+
+            </ScrollView>
+            <View style={[styles.modalButtons, { paddingBottom: insets.bottom + 16 }]}>
+              <Pressable style={styles.btnSecondary} onPress={handleClose}>
+                <Text style={styles.btnSecondaryText}>Cancel</Text>
+              </Pressable>
+              <Pressable
+                style={isLoading ? [styles.btnPrimary, { backgroundColor: colors.line }] : styles.btnPrimary}
+                onPress={handleSave}
+                disabled={isLoading}
+              >
+                <Text style={styles.btnPrimaryText}>{event ? "Save" : "Create"}</Text>
+              </Pressable>
+            </View>
+          </Animated.View>
         </GestureHandlerRootView>
       </Modal >
     </>

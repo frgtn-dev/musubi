@@ -40,6 +40,7 @@ export default function MainTab() {
   const [eventDetailVisible, setEventDetailVisible] = useState(false);
   const [prefilledEvent, setPrefilledEvent] = useState<Event | undefined>(undefined);
   const [eventDetail, setEventDetail] = useState<Event | null>(null);
+  const [startingDate, setStartingDate] = useState<Date | undefined>(new Date());
 
   const handlerEventEdit = (event: Event) => {
     setEventDetailVisible(false);
@@ -47,12 +48,17 @@ export default function MainTab() {
     setNewEventVisible(true);
   };
 
+  const handleCreateEventOnCell = (date: Date) => {
+    setStartingDate(date);
+    setNewEventVisible(true);
+  }
+
   const openEventDetail = useCallback((event: Event) => {
     setEventDetail(event);
     setEventDetailVisible(true);
   }, []);
 
-  const { visibleEvents, enrichedEvents } = useVisibleEvents(events, activeCals);
+  const { visibleEvents } = useVisibleEvents(events, activeCals);
 
   const scrollOffset = useMemo(() =>
     new Date().getHours() * 60 - 60,
@@ -83,8 +89,6 @@ export default function MainTab() {
           <Calendar
             events={visibleEvents}
             eventsAreSorted={true}
-            enableEnrichedEvents={true}
-            enrichedEventsByDate={enrichedEvents}
             height={calMode === "month" ? calHeight : calHeight + 95}
             theme={calendarTheme}
             eventCellStyle={eventCellStyle}
@@ -96,6 +100,7 @@ export default function MainTab() {
             scrollOffsetMinutes={scrollOffset}
             onSwipeEnd={setAnchorDate}
             onPressEvent={openEventDetail}
+            onPressCell={handleCreateEventOnCell}
           />
         )}
       </View>
@@ -107,9 +112,13 @@ export default function MainTab() {
       </Pressable>
       <AddEventModal
         visible={newEventVisible}
-        onClose={() => setNewEventVisible(false)}
-        onSave={(e) => addEvent(e, api)}
-        onEdit={(e) => updateEvent(e, api)}
+        startingDate={startingDate}
+        onClose={() => {
+          setNewEventVisible(false);
+          setStartingDate(undefined);
+        }}
+        onSave={async (e) => await addEvent(e, api)}
+        onEdit={async (e) => await updateEvent(e, api)}
         calendars={calendars}
         event={prefilledEvent}
       />
